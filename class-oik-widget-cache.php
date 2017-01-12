@@ -114,6 +114,7 @@ class oik_widget_cache {
 		$this->get_cached_widget();
 
 		if ( empty( $this->cached_widget ) ) {
+			$this->save_dependencies();
 			ob_start();
 			$widget_object->widget( $args, $instance );
 			$this->cached_widget = ob_get_contents();
@@ -224,10 +225,26 @@ class oik_widget_cache {
 	}
 	
 	/**
+	 * Saves the current state of dependencies.
+	 */
+	function save_dependencies() {
+		$this->dependencies =  null;
+		if ( $this->dependencies_cache ) {
+			$this->dependencies_cache->save_dependencies();
+		}
+	}
+		
+																 
+	
+	/**
 	 * Determines dependencies
 	 */
 	function determine_dependencies() {
-		$this->dependencies =  null;
+		if ( $this->dependencies_cache ) {
+			$this->dependencies_cache->query_dependencies_changes();
+			$this->dependencies = $this->dependencies_cache->serialize_dependencies();
+		}
+		bw_trace2( $this->dependencies, "dependencies!" );
 	}
 	
 	/**
@@ -235,24 +252,26 @@ class oik_widget_cache {
 	 *
 	 */
 	function replay_dependencies() {
+		if ( $this->dependencies_cache ) {
+			$this->dependencies_cache->reload_dependencies( $this->dependencies );
+			$this->dependencies_cache->replay_dependencies();
+			
+		}
 	
 	}
 	
 	/**
 	 * Caches the widget and dependencies
 	 * 
-	 * @TODO Add the dependencies stuff
-	 
-			set_transient(
-				$cache_key,
-				$cached_widget,
-				apply_filters( 'widget_output_cache_ttl', 60 * 12, $args )
-			);
 	 */
 	function cache_widget( $args ) {
 		$duration = 43200;
 		$duration = apply_filters( 'widget_output_cache_ttl', $duration, $args );
-    set_transient( $this->cache_key, $this->cached_widget, $duration );
+		
+		$cached_widget = array( "widget" => $this->cached_widget
+													, "dependencies" => $this->dependencies
+													);
+    set_transient( $this->cache_key, $cached_widget, $duration );
 	}
 	
 	/**
@@ -260,7 +279,16 @@ class oik_widget_cache {
 	 */
 	
 	function get_cached_widget() {
-		$this->cached_widget = get_transient( $this->cache_key );
+		$cached_widget = get_transient( $this->cache_key );
+		bw_trace2( $cached_widget );
+		
+		if ( is_array( $cached_widget ) ) {
+		
+			$this->cached_widget = $cached_widget['widget'];
+			$this->dependencies = $cached_widget['dependencies'];
+		} else {
+			$this->cached_widget = $cached_widget; 
+		}
 	}
 	
 	
