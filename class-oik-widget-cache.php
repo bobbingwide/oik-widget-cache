@@ -24,6 +24,8 @@ class oik_widget_cache {
 	public $dependencies;
 	public $cached_widget;
 	public $dependencies_cache;
+	public $bw_jq;
+	public $bw_jq_changes;
 
 	// Store IDs of widgets to include from cache
 	private $included_ids = array();
@@ -115,16 +117,19 @@ class oik_widget_cache {
 
 		if ( empty( $this->cached_widget ) ) {
 			$this->save_dependencies();
+			$this->save_bw_jq();
 			ob_start();
 			$widget_object->widget( $args, $instance );
 			$this->cached_widget = ob_get_contents();
 			ob_end_clean();
 			$this->determine_dependencies();
+			$this->determine_bw_jq_changes();
 			$this->cache_widget( $args );
 			$this->display_widget( "into cache" );
 		} else {
 			$this->replay_dependencies();
 			$this->display_widget( "from cache" );
+			$this->replay_bw_jq_changes();
 		}
 		// We already echoed the widget, so return false
 		return false;
@@ -233,8 +238,6 @@ class oik_widget_cache {
 			$this->dependencies_cache->save_dependencies();
 		}
 	}
-		
-																 
 	
 	/**
 	 * Determines dependencies
@@ -255,9 +258,7 @@ class oik_widget_cache {
 		if ( $this->dependencies_cache ) {
 			$this->dependencies_cache->reload_dependencies( $this->dependencies );
 			$this->dependencies_cache->replay_dependencies();
-			
 		}
-	
 	}
 	
 	/**
@@ -270,6 +271,7 @@ class oik_widget_cache {
 		
 		$cached_widget = array( "widget" => $this->cached_widget
 													, "dependencies" => $this->dependencies
+													, "bw_jq_changes" => $this->bw_jq_changes
 													);
     set_transient( $this->cache_key, $cached_widget, $duration );
 	}
@@ -277,7 +279,6 @@ class oik_widget_cache {
 	/**
 	 * Retrieves the cached widget. 
 	 */
-	
 	function get_cached_widget() {
 		$cached_widget = get_transient( $this->cache_key );
 		bw_trace2( $cached_widget );
@@ -286,8 +287,45 @@ class oik_widget_cache {
 		
 			$this->cached_widget = $cached_widget['widget'];
 			$this->dependencies = $cached_widget['dependencies'];
+			$this->bw_jq_changes = $cached_widget['bw_jq_changes'];
 		} else {
 			$this->cached_widget = $cached_widget; 
+		}
+	}
+	
+	/**
+	 * Saves existing bw_jq global
+	 * 
+	 * What if the global is not set?
+	 */
+	function save_bw_jq() {
+		global $bw_jq;
+		$this->bw_jq = $bw_jq;
+	}
+	
+	/**
+	 * Tests for new inline jQuery code.
+	 * 
+	 */
+	function determine_bw_jq_changes() {
+		global $bw_jq;
+		if ( $bw_jq != $this->bw_jq ) {
+			$saved_len = strlen( $this->bw_jq );
+			$this->bw_jq_changes =	substr( $bw_jq, $saved_len );
+		} else {
+			$this->bw_jq_changes = null;
+		}
+	}
+	
+	/**
+	 * Replays the changes to $bw_jq
+	 *
+	 * If there are some changes then we need to requeue these.
+	 * We have to test that bw_jq exists; oik may have been deactivated since the data was cached.
+	 */
+	function replay_bw_jq_changes() {
+		if ( $this->bw_jq_changes && function_exists( "bw_jq") ) {
+			bw_jq( $this->bw_jq_changes );
 		}
 	}
 	
