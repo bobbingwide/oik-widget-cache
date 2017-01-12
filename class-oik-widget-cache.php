@@ -1,11 +1,13 @@
-<?php // (C) Copyright Bobbing Wide 2016, 2017
+<?php // (C) Copyright Bobbing Wide 2016, 2017 
 
 /**
  * oik_widget_cache class
  *
- * This class started life as WidgetOutputCache
- * but has been changed to work with included_ids instead of excluded_ids
- * Additionally the logic is intended to be lazy loaded on the first widget
+ * This class started life as WidgetOutputCache ( Copyright 2013-2015 Kaspars Dambis ( kasparsd ) )
+ * but has been changed to work with included_ids instead of excluded_ids.
+ * 
+ * @TODO
+ * Additionally the logic is intended to be lazy loaded on the first widget.
  * 
  * There is also the potential to split the WordPress admin code from the front-end
  * which would require implementation as multiple classes
@@ -248,7 +250,8 @@ class oik_widget_cache {
 			);
 	 */
 	function cache_widget( $args ) {
-		$duration = apply_filters( 'widget_output_cache_ttl', 60 * 12, $args );
+		$duration = 43200;
+		$duration = apply_filters( 'widget_output_cache_ttl', $duration, $args );
     set_transient( $this->cache_key, $this->cached_widget, $duration );
 	}
 	
@@ -257,7 +260,6 @@ class oik_widget_cache {
 	 */
 	
 	function get_cached_widget() {
-	
 		$this->cached_widget = get_transient( $this->cache_key );
 	}
 	
@@ -270,12 +272,12 @@ class oik_widget_cache {
 	 */
 	function oik_widget_cache_oik_loaded() {
 		oik_require_lib( "class-dependencies-cache" );
-		if ( !class_exists( "dependencies_cache" ) ) {
-			$this->dependencies_cache = null;
-		}	else {
+		if ( class_exists( "dependencies_cache" ) ) {
 			$this->dependencies_cache = dependencies_cache::instance();
-		}					 
-}
+		}	else {
+			$this->dependencies_cache = null;
+		}	
+	}
 	
 
 }
