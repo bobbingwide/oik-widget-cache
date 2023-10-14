@@ -3,9 +3,9 @@
 * Contributors: bobbingwide
 * Donate link: http://www.oik-plugins.com/oik/oik-donate/
 * Tags: widget, cache, optional
-* Requires at least: 4.6
-* Tested up to: 4.7.1
-* Stable tag: 0.0.0
+* Requires at least: 5.5
+* Tested up to: 5.6-RC2
+* Stable tag: 0.0.2
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,9 @@ It's not really. It will use oik's class-dependencies-cache if available.
 1. oik-widget-cache in action
 
 ## Upgrade Notice 
+# 0.0.2 
+Tested with WordPress 5.6-RC2 and WordPress Multi Site
+
 # 0.0.1 
 Now supports widgets which enqueue scripts and styles, including inline jQuery code with bw_jq.
 
@@ -46,6 +49,11 @@ Now supports widgets which enqueue scripts and styles, including inline jQuery c
 New plugin, available from GitHub
 
 ## Changelog 
+# 0.0.2 
+* Tested: With WordPress 5.6-RC2 and WordPress Multi Site
+* Tested: With PHP 7.4
+
+
 # 0.0.1 
 * Added: Works with oik base plugin to handling enqueued script and style dependencies
 * Added: Support for inline jQuery enqueued using bw_jq
@@ -57,7 +65,7 @@ New plugin, available from GitHub
 
 ## Further reading 
 If you want to read more about the oik plugins then please visit the
-[oik plugin](http://www.oik-plugins.com/oik)
+[oik plugin](https://www.oik-plugins.com/oik)
 **"the oik plugin - for often included key-information"**
 
 oik-widget-cache was originally based on the widget-output-cache plugin by Kaspars Dambis ( @kasparsd ).
