@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: widget, cache, optional
 Requires at least: 5.5
-Tested up to: 5.6-RC2
-Stable tag: 0.0.2
+Tested up to: 6.4-beta3
+Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,9 @@ It's not really. It will use oik's class-dependencies-cache if available.
 1. oik-widget-cache in action
 
 == Upgrade Notice ==
+= 0.0.3 = 
+Upgrade for support for PHP 8.1 and PHP 8.2
+
 = 0.0.2 = 
 Tested with WordPress 5.6-RC2 and WordPress Multi Site
 
@@ -48,6 +51,12 @@ Now supports widgets which enqueue scripts and styles, including inline jQuery c
 New plugin, available from GitHub
 
 == Changelog == 
+= 0.0.3 =
+* Changed: Support PHP 8.1 and PHP 8.2 #4
+* Tested: With WordPress 6.4-beta3 and WordPress Multisite
+* Tested: With PHP 8.0, PHP 8.1 and PHP 8.2
+
+
 = 0.0.2 = 
 * Tested: With WordPress 5.6-RC2 and WordPress Multi Site
 * Tested: With PHP 7.4
