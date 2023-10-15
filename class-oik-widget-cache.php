@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2016, 2017 
+<?php // (C) Copyright Bobbing Wide 2016, 2017, 2023
 
 /**
  * oik_widget_cache class
@@ -310,7 +310,7 @@ class oik_widget_cache {
 	function determine_bw_jq_changes() {
 		global $bw_jq;
 		if ( $bw_jq != $this->bw_jq ) {
-			$saved_len = strlen( $this->bw_jq );
+			$saved_len = ( null === $this->bw_jq ) ? 0 : strlen( $this->bw_jq );
 			$this->bw_jq_changes =	substr( $bw_jq, $saved_len );
 		} else {
 			$this->bw_jq_changes = null;
